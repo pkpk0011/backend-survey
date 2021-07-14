@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3001; //process.env.PORT || 
+const port = process.env.PORT || 3001;
 const mysql = require('mysql');
 const cors = require('cors');
 const { response } = require('express');
@@ -44,6 +44,26 @@ app.post('/create', (req, res)=>{
     });
   });
 
+  app.post('/update', (req, res)=>{
+    const sql = 'UPDATE `valuecount` SET value = value+1 WHERE type = ?';
+    let type = req.body.type;
+    let params = [type]
+    connection.query(sql, params, function (err, result, fields) {
+        if(err){
+            console.log(err);
+        };
+    });
+  });
+
+  app.post('/orderby', (req, res) => {
+      const sql = 'Select * from `valuecount` order by value desc;'
+      connection.query(sql, function (err, result, fields) {
+          if(err) {
+              console.log(err);
+          };
+        res.json({topType: result});
+      })
+  });
 
 module.exports = router;
 
